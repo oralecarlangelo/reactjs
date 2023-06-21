@@ -1,51 +1,65 @@
-# Functional Components
-## Overview
-Functional components are a fundamental concept in React.js that allow you to create reusable UI components using JavaScript functions. In this topic, we will explore how to create and use functional components in React.
+# Props in Functional Components
 
-## Learning Objectives
+# Overview
+
+Props (short for properties) are a fundamental concept in React.js that allow you to pass data from a parent component to a child component. In functional components, props are used to customize the behavior or content of the component. In this topic, we will explore what props are and how to use them in functional components.
+
+# Learning Objectives
+
 By the end of this topic, you will:
 
-Understand the purpose and benefits of using functional components in React.
-Learn how to create and use functional components in your React applications.
-## Creating Functional Components
-Functional components are defined as JavaScript functions that return JSX. Here's an example of a basic functional component:
+Understand the purpose and benefits of using props in functional components.
+Learn how to pass props to functional components and access them within the component.
 
+# What are Props?
+
+Props are a way to pass data from a parent component to a child component. They are similar to attributes in HTML and allow you to customize the behavior or content of a component. Props are read-only and should not be modified within the child component.
+
+# Using Props in Functional Components
+
+To pass props to a functional component, you can include them as attributes when rendering the component. Here's an example of passing a prop to a functional component:
 
 ```javascript
+import React from "react";
 
-import React from 'react';
-
-function Greeting() {
-  return <h1>Hello, Functional Component!</h1>;
+function Greeting(props) {
+  return <h1>Hello, {props.name}!</h1>;
 }
 ```
 
-In the above example, we have defined a functional component called Greeting that returns a JSX element representing a heading with the text "Hello, Functional Component!". Functional components are typically written as JavaScript functions and follow a naming convention where the function name starts with a capital letter.
+In the above example, we have defined a functional component called `Greeting` that accepts a prop called `name`. Within the JSX code, we can access the `name` prop using `props.name` and dynamically display the name.
 
-## Using Functional Components
-To use a functional component, you can simply include it as JSX within another component or the root of your application. Here's an example of using the `Greeting` component within another component:
+To use the `Greeting` component with a specific name prop, you can pass it as an attribute when rendering the component:
 
 ```javascript
-import React from 'react';
-import Greeting from './Greeting';
+import React from "react";
+import Greeting from "./Greeting";
 
 function App() {
   return (
     <div>
-      <Greeting />
+      <Greeting name="John" />
     </div>
   );
 }
-
 ```
 
-In the above example, we import the `Greeting` component and include it within the JSX of the `App` component. This renders the `Greeting` component as part of the App component's content.
+In the above example, we render the Greeting component with the name prop set to "John". The Greeting component will display "Hello, John!" as its output.
 
-Functional components can also accept props as input to customize their behavior or content. You can pass props to a functional component just like any other JSX attribute.
+## Default Props
 
-## Benefits of Functional Components
-Functional components offer several benefits in React development:
+You can also provide default values for props in case they are not passed from the parent component. This can be done using the `defaultProps` property of the functional component. Here's an example:
 
-**Simplicity**: Functional components are simpler and easier to read and understand compared to class components.
-**Reusability**: Functional components are highly reusable, allowing you to create modular and maintainable code.
-**Performance**: Functional components are lightweight and have a lower memory footprint, resulting in better performance.
+```javascript
+import React from "react";
+
+function Greeting(props) {
+  return <h1>Hello, {props.name}!</h1>;
+}
+
+Greeting.defaultProps = {
+  name: "Guest",
+};
+```
+
+In the above example, if the `name` prop is not provided when rendering the `Greeting` component, it will default to "Guest".
