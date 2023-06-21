@@ -1,7 +1,12 @@
 import React from 'react';
+import Greeting from './Greeting';
 
 function App() {
-  return <h1>Hello, React!</h1>;
+  return (
+    <div>
+      <Greeting />
+    </div>
+  );
 }
 
 export default App;
