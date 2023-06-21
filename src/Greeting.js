@@ -1,7 +1,11 @@
-import React from 'react';
+import React from "react";
 
-function Greeting() {
-  return <h1>Hello, Functional Component!</h1>;
+function Greeting(props) {
+  return <h1>Hello, {props.name}!</h1>;
 }
 
-export default Greeting
+Greeting.defaultProps = {
+  name: "Guest",
+};
+
+export default Greeting;
