@@ -1,10 +1,12 @@
 import React from "react";
-import Counter from "./Counter";
+import Button from "./Button";
+import Input from "./Input";
 
 function App() {
   return (
     <div>
-      <Counter />
+      <Button />
+      <Input />
     </div>
   );
 }
