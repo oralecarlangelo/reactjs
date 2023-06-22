@@ -1,17 +1,32 @@
-import React from "react";
-import ExpensiveComponent from "./ExpensiveComponent";
-import ParentComponent from "./ParentComponent";
-import ParentMemoComponent from "./MemoizedComponent";
+import { useState, useEffect } from 'react';
 
-const App = () => {
-  const data = [1, 2, 3, 4, 5, 6];
+function useWindowWidth() {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return windowWidth;
+}
+
+function App() {
+  const windowWidth = useWindowWidth();
+
   return (
     <div>
-      <ExpensiveComponent data={data} />
-      <ParentComponent />
-      <ParentMemoComponent />
+      <p>Window Width: {windowWidth}px</p>
     </div>
   );
-};
+}
 
 export default App;
