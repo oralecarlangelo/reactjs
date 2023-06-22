@@ -1,11 +1,14 @@
-import ErrorBoundary from './ErrorBoundary';
-import MyComponent from './MyComponent';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import LazyLoading from "./Lazy";
+import SuspenseComponent from "./Suspense";
 
 function App() {
   return (
-    <ErrorBoundary>
-      <MyComponent />
-    </ErrorBoundary>
+    <div>
+      <LazyLoading />
+      <SuspenseComponent />
+    </div>
   );
 }
 
