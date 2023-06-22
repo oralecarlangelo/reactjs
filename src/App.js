@@ -1,36 +1,68 @@
-import React, { createContext, useContext, useState } from "react";
+import React from "react";
+import { BrowserRouter as Router, Switch, Route, Link, useHistory, useParams } from "react-router-dom";
 
-// Create a context object
-const ThemeContext = createContext();
-
-function App() {
-  const [theme, setTheme] = useState("light");
-
-  // Define a provider component to wrap the components that need access to the context
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      <div>
-        <h1>App</h1>
-        <Toolbar />
-      </div>
-    </ThemeContext.Provider>
-  );
+function Home() {
+  return <h1>Welcome to the Home page!</h1>;
 }
 
-function Toolbar() {
-  // Use the useContext hook to access the theme value from the context
-  const { theme, setTheme } = useContext(ThemeContext);
+function About() {
+  return <h1>About Us</h1>;
+}
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
+function UserProfile() {
+  const { username } = useParams();
+  return <h1>User Profile: {username}</h1>;
+}
+
+function NotFound() {
+  const history = useHistory();
+
+  const goBack = () => {
+    history.goBack();
   };
 
   return (
     <div>
-      <h2>Toolbar - {theme}</h2>
-      <button onClick={toggleTheme}>Toggle Theme</button>
+      <h1>404 Not Found</h1>
+      <button onClick={goBack}>Go Back</button>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/user/johndoe">User Profile</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route path="/about">
+            <About />
+          </Route>
+          <Route path="/user/:username">
+            <UserProfile />
+          </Route>
+          <Route path="*">
+            <NotFound />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
