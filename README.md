@@ -123,3 +123,4 @@ When using memo, remember to import it from the 'react' module to access the mem
 3. It helps optimize performance by caching the result of the computation and returning the cached result when the dependencies specified in the dependency array remain unchanged.
 4. Specify the dependencies in the dependency array to trigger the re-computation of the value when any of the dependencies change.
 5. Common use cases for useMemo include memoizing computed values, memoizing the return value of a function, and avoiding unnecessary re-renders caused by expensive computations.
+
