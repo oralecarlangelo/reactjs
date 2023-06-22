@@ -1,82 +1,108 @@
-# Conditional and List Rendering
+# React Hooks
 
 ## Overview
 
-Conditional rendering and list rendering are essential techniques in React.js that allow components to display different content based on certain conditions or render lists of data dynamically. In this topic, we will explore how to conditionally render elements and render lists of data in React functional components.
+React Hooks are a set of built-in functions provided by React that allow you to use state and other React features in functional components. With Hooks, you can add state, lifecycle methods, context, and more to your functional components without needing to convert them to class components. In this topic, we will explore the commonly used built-in Hooks in React, including useState, useEffect, useContext, and useReducer.
 
 ## Learning Objectives
 
 By the end of this topic, you will:
 
-- Understand how to conditionally render elements in React functional components.
-- Learn how to render lists of data dynamically in React functional components.
+- Deep dive into React Hooks and understand their benefits.
+- Learn how to use useState, useEffect, useContext, and useReducer Hooks in your functional components.
 
-## Conditional Rendering
+## useState Hook
 
-Conditional rendering in React enables components to display different content based on specific conditions. You can use JavaScript expressions or conditional operators to determine what content to render. Here's an example:
+The useState Hook allows you to add state to functional components. It returns a pair of values: the current state and a function to update the state. Here's an example:
 
 ```javascript
-import React from "react";
-
-function Greeting(props) {
-  const isLoggedIn = props.isLoggedIn;
+function Counter() {
+  const [count, setCount] = useState(0);
 
   return (
-    <div>{isLoggedIn ? <h1>Welcome back!</h1> : <h1>Please log in.</h1>}</div>
+    <div>
+      <h1>Counter: {count}</h1>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count - 1)}>Decrement</button>
+    </div>
   );
 }
 ```
 
-`In the above example, the Greeting component conditionally renders a different message based on the value of the isLoggedIn prop. If isLoggedIn is true, it displays "Welcome back!" as an <h1> element. Otherwise, it displays "Please log in." as an <h1> element.`
+In the above example, the `Counter` component uses the useState Hook to add a count state variable and a `setCount` function to update the count. Clicking the "Increment" or "Decrement" buttons will update the count and re-render the component.
 
-## List Rendering
+## useEffect Hook
 
-List rendering in React allows you to dynamically render lists of data, such as arrays or object properties. You can use the map() method to iterate over the data and generate the list of elements. Here's an example:
+The useEffect Hook allows you to perform side effects in functional components. It takes a callback function that will be executed after every render. Here's an example:
 
 ```javascript
-import React from "react";
+function DataFetcher() {
+  const [data, setData] = useState(null);
 
-function TodoList(props) {
-  const todos = props.todos;
+  useEffect(() => {
+    fetchData().then((data) => setData(data));
+  }, []);
 
   return (
-    <ul>
-      {todos.map((todo) => (
-        <li key={todo.id}>{todo.text}</li>
-      ))}
-    </ul>
+    <div>
+      <h1>Data Fetcher</h1>
+      {data ? <p>{data}</p> : <p>Loading data...</p>}
+    </div>
   );
 }
 ```
 
-`In the above example, the TodoList component renders a list of todos based on the todos prop. The map() method is used to iterate over each todo item in the todos array and generate a <li> element for each item. Each <li> element has a unique key attribute set to the id of the todo item, and the text of the todo is displayed as the content of the element.`
+In the above example, the `DataFetcher` component fetches data using the fetchData function and updates the data state when the data is available. The empty dependency array [] passed as the second argument to useEffect ensures that the effect runs only once when the component is mounted.
 
-## Conditional List Rendering
+## useContext Hook
 
-You can combine conditional rendering and list rendering to handle more complex scenarios. For example, you can conditionally render certain list items based on specific conditions. Here's an example:
+The useContext Hook allows you to access the value of a context in functional components. It takes a context object created using the React.createContext function. Here's an example:
 
 ```javascript
-import React from "react";
+const ThemeContext = React.createContext("light");
 
-function TodoList(props) {
-  const todos = props.todos;
-  const filter = props.filter;
+function ThemeToggle() {
+  const theme = useContext(ThemeContext);
 
   return (
-    <ul>
-      {todos.map((todo) =>
-        filter === "completed" && !todo.completed ? null : (
-          <li
-            key={todo.id}
-            style={{ textDecoration: todo.completed ? "line-through" : "none" }}
-          >
-            {todo.text}
-          </li>
-        )
-      )}
-    </ul>
+    <div>
+      <h1>Current Theme: {theme}</h1>
+    </div>
   );
 }
 ```
 
-In the above example, the `TodoList` component conditionally renders each todo item based on the value of the `filter` prop. If the `filter` prop is set to 'completed' and the `todo` is not completed, the list item is not rendered. Otherwise, the list item is rendered with the appropriate styling based on the `completed` property of the todo.
+In the above example, the ThemeToggle component uses the useContext Hook to access the current theme value from the ThemeContext. It renders the current theme in the UI.
+
+## useReducer Hook
+
+The useReducer Hook is an alternative to useState for managing complex state logic. It takes a reducer function and an initial state and returns the current state and a dispatch function to update the state. Here's an example:
+
+```javascript
+const initialState = { count: 0 };
+
+function counterReducer(state, action) {
+  switch (action.type) {
+    case "increment":
+      return { count: state.count + 1 };
+    case "decrement":
+      return { count: state.count - 1 };
+    default:
+      return state;
+  }
+}
+
+function CounterReducer() {
+  const [state, dispatch] = useReducer(counterReducer, initialState);
+
+  return (
+    <div>
+      <h1>Counter: {state.count}</h1>
+      <button onClick={() => dispatch({ type: "increment" })}>Increment</button>
+      <button onClick={() => dispatch({ type: "decrement" })}>Decrement</button>
+    </div>
+  );
+}
+```
+
+In the above example, the `CounterReducer` component uses the `useReducer` Hook to manage the count state. It defines a `counterReducer` function that handles state updates based on different action types. The state and dispatch function are obtained from useReducer, and clicking the "Increment" or "Decrement" buttons dispatches the corresponding actions to update the state.
