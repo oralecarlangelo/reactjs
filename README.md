@@ -1,128 +1,59 @@
-# Forms in React
-Forms are an essential part of many web applications, and React provides powerful tools for handling form inputs, form state management, form validation, and form submission. This documentation will guide you through an example of form handling in React.
+# Understanding the Context API and useContext Hook
 
-## Example
+The Context API is a built-in feature in React that allows you to share state and provide it to multiple components without having to pass props manually at each level of the component tree. It provides a way to pass data through the component tree without explicitly passing props down the hierarchy.
+
+# Example
 
 ```javascript
-import React, { useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
-function FormExample() {
-  // Initialize form data and form errors state
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+// Create a context object
+const ThemeContext = createContext();
 
-  const [formErrors, setFormErrors] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+function App() {
+  const [theme, setTheme] = useState("light");
 
-  // Handle form input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  // Define a provider component to wrap the components that need access to the context
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      <div>
+        <h1>App</h1>
+        <Toolbar />
+      </div>
+    </ThemeContext.Provider>
+  );
+}
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
+function Toolbar() {
+  // Use the useContext hook to access the theme value from the context
+  const { theme, setTheme } = useContext(ThemeContext);
 
-    // Perform form validation
-    let errors = {};
-
-    if (!formData.name.trim()) {
-      errors.name = "Name is required";
-    }
-
-    if (!formData.email.trim()) {
-      errors.email = "Email is required";
-    } else if (!isValidEmail(formData.email)) {
-      errors.email = "Invalid email format";
-    }
-
-    if (!formData.password.trim()) {
-      errors.password = "Password is required";
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-    } else {
-      // Form submission logic
-      console.log("Form submitted:", formData);
-      // Reset form data and errors
-      setFormData({
-        name: "",
-        email: "",
-        password: "",
-      });
-      setFormErrors({});
-    }
-  };
-
-  // Helper function for email validation
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
   };
 
   return (
     <div>
-      <h1>Form Example</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-          />
-          {formErrors.name && <span>{formErrors.name}</span>}
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          {formErrors.email && <span>{formErrors.email}</span>}
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          {formErrors.password && <span>{formErrors.password}</span>}
-        </div>
-        <button type="submit">Submit</button>
-      </form>
+      <h2>Toolbar - {theme}</h2>
+      <button onClick={toggleTheme}>Toggle Theme</button>
     </div>
   );
 }
 
-export default FormExample;
+export default App;
 ```
 
 ## Usage
-1. Import the `FormExample` component into your React application.
-2. Place the `FormExample` component in your desired location within your component hierarchy.
-3. Customize the form inputs, validation rules, and submission logic as per your requirements.
+
+1. Create a context object using the createContext function.
+2. Wrap the components that need access to the context with a Provider component, passing the desired value as the value prop.
+3. Use the useContext hook to access the context value within a functional component.
 
 ## Explanation
-1. The `FormExample` component sets up the form state using the `useState` hook. It initializes the formData state with empty values for name, email, and password, and the `formErrors` state to track any validation errors.
-2. The `handleChange` function updates the form data as the user types in the input fields, using the setFormData function provided by the `useState` hook.
-3. The `handleSubmit` function is called when the form is submitted. It performs form validation by checking the form data and updating the `formErrors` state accordingly.
-4. The form inputs are controlled components, meaning their values are derived from the `formData` state and their changes are handled by the handleChange function.
-5. The form errors are conditionally rendered next to the respective input fields if there are any validation errors.
-6. Upon successful form submission, the form data is logged to the console, and the form is reset by setting the `formData` state back to empty values and clearing the `formErrors` state.
+
+1. In the example above, we create a context object named `ThemeContext` using the `createContext` function. This context will be used to share the `theme` value and `setTheme` function.
+2. In the App component, we wrap the components that need access to the `theme` and `setTheme` values with the `ThemeContext.Provider` component. The value prop of the provider specifies the context value to be shared with its descendants.
+3. Inside the `Toolbar` component, we use the `useContext` hook to access the theme and setTheme values from the `ThemeContext`. This allows us to toggle the theme by updating the `theme` state using the `setTheme` function.
+
+By using the Context API and the useContext hook, we can efficiently manage global state in React applications without passing props through multiple layers of components.
