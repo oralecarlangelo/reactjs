@@ -16,7 +16,7 @@ function App() {
     <div>
       <Greeting isLoggedIn={isLoggedIn} />
       <TodoList todos={todos} />
-      <ConditionalTodoList todos={todos} />
+      <ConditionalTodoList todos={todos} filter="completed" />
     </div>
   );
 }
