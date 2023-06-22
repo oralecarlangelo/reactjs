@@ -1,77 +1,61 @@
-# Error Boundary in ReactJS
+# Lazy Loading and Code-Splitting with React.lazy and Suspense
 
-Error boundaries are a way to gracefully handle and catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI.
+Lazy loading and code-splitting are techniques used to improve the performance of React applications by loading components or routes asynchronously when they are needed, rather than upfront.
 
-## Example
+## 1. Lazy Loading with React.lazy
+   React provides the React.lazy function, which allows you to lazily load a component. It takes a function that returns a dynamic import() statement, which specifies the path to the component module.
 
-Here's a basic example of an Error Boundary component:
-
-```javascript
-import React from "react";
-
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error) {
-    // Update state so the next render will show the fallback UI.
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    // You can also log the error to an error reporting service
-    console.error("Caught error: ", error, "Info: ", errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return <h1>Something went wrong.</h1>;
-    }
-
-    return this.props.children;
-  }
-}
-
-export default ErrorBoundary;
-```
-
-You can use it as a regular component to wrap potentially problematic components:
+## Example:
 
 ```javascript
-import ErrorBoundary from "./ErrorBoundary";
-import MyComponent from "./MyComponent";
+import React, { lazy } from "react";
 
-function App() {
+const LazyComponent = lazy(() => import("./LazyComponent"));
+
+function MyComponent() {
   return (
-    <ErrorBoundary>
-      <MyComponent />
-    </ErrorBoundary>
+    <div>
+      <h1>My Component</h1>
+      <LazyComponent />
+    </div>
   );
 }
-
-export default App;
 ```
 
-In the above example, if MyComponent throws an error during rendering, the ErrorBoundary will catch it, display "Something went wrong." and log the error details to the console.
+Documentation: [React.lazy](https://reactjs.org/docs/code-splitting.html#reactlazy)
 
-## Methods
+## 2. Suspense for Fallback Rendering
+   To handle the loading state of lazily loaded components, React provides the Suspense component. It allows you to specify a fallback UI that is rendered while the lazily loaded component is being loaded.
 
-### static getDerivedStateFromError(error)
+## Example:
 
-This lifecycle method is invoked after an error has been thrown by a descendant component. It receives the error that was thrown as a parameter and should return a value to update state.
+```javascript
+import React, { lazy, Suspense } from "react";
 
-### componentDidCatch(error, errorInfo)
+const LazyComponent = lazy(() => import("./LazyComponent"));
 
-This method works like a JavaScript catch {} block, but for components. The method is called when an error is thrown in a component during rendering, in a lifecycle method, or in the constructor of any child component.
+function MyComponent() {
+  return (
+    <div>
+      <h1>My Component</h1>
+      <Suspense fallback={<div>Loading...</div>}>
+        <LazyComponent />
+      </Suspense>
+    </div>
+  );
+}
+```
 
-## Note
+Documentation: [Suspense](https://reactjs.org/docs/code-splitting.html#suspense)
 
-Error boundaries do not catch errors for:
+With lazy loading and code-splitting, you can optimize your React application's performance by loading only the necessary components when they are needed, reducing the initial bundle size and improving the overall loading speed.
 
-- Event handlers (learn more)
-- Asynchronous code (e.g. setTimeout or requestAnimationFrame callbacks)
-- Server side rendering
-- Errors thrown in the error boundary itself (rather than its children)
+It's important to note that lazy loading and code-splitting should be used judiciously, considering the trade-off between performance optimization and user experience. It's recommended to analyze and profile your application's performance to identify the parts that would benefit the most from lazy loading.
+
+## When to use lazy and Suspense
+
+In React, lazy and Suspense are typically used together to enable lazy loading and code-splitting of components. Here's a general guideline for when to use each:
+
+- Use lazy when you want to lazily load a component. This is useful when you have a large component or a component that is not needed immediately when the parent component renders. By lazy loading the component, you can improve the initial loading performance of your application.
+
+- Use Suspense along with lazy to handle the loading state and fallback UI. Suspense is a React component that allows you to specify a fallback UI while a lazy-loaded component is being loaded. It provides a smooth transition between the loading state and the fully rendered state of the component.
