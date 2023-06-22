@@ -1,59 +1,82 @@
-# Handling Events in Functional Components
+# Conditional and List Rendering
 
 ## Overview
 
-Event handling is an essential aspect of building interactive user interfaces in React.js. Events allow components to respond to user actions, such as button clicks, input changes, and more. In this topic, we will explore event handling in React functional components and learn how to handle various events like onClick, onChange, and more.
+Conditional rendering and list rendering are essential techniques in React.js that allow components to display different content based on certain conditions or render lists of data dynamically. In this topic, we will explore how to conditionally render elements and render lists of data in React functional components.
 
 ## Learning Objectives
 
 By the end of this topic, you will:
 
-- Understand the concept of event handling in React functional components.
-- Learn how to handle different events like onClick, onChange, and others in your functional components.
+- Understand how to conditionally render elements in React functional components.
+- Learn how to render lists of data dynamically in React functional components.
 
-## Event Handling in React
+## Conditional Rendering
 
-In React, event handling is similar to handling events in standard JavaScript. However, there are a few differences and considerations specific to React. Events in React use camelCase naming convention, and you attach event handlers to JSX elements using props.
-
-## Handling onClick Event
-
-Here's an example of handling the onClick event in a functional component:
+Conditional rendering in React enables components to display different content based on specific conditions. You can use JavaScript expressions or conditional operators to determine what content to render. Here's an example:
 
 ```javascript
 import React from "react";
 
-function Button() {
-  const handleClick = () => {
-    console.log("Button clicked!");
-  };
+function Greeting(props) {
+  const isLoggedIn = props.isLoggedIn;
 
-  return <button onClick={handleClick}>Click me</button>;
+  return (
+    <div>{isLoggedIn ? <h1>Welcome back!</h1> : <h1>Please log in.</h1>}</div>
+  );
 }
 ```
 
-In the above example, we define a functional component called `Button` that renders a button element. We attach the `handleClick` function to the onClick event of the button. When the button is clicked, the `handleClick` function is called, and it logs a message to the console.
+`In the above example, the Greeting component conditionally renders a different message based on the value of the isLoggedIn prop. If isLoggedIn is true, it displays "Welcome back!" as an <h1> element. Otherwise, it displays "Please log in." as an <h1> element.`
 
-## Handling onChange Event
+## List Rendering
 
-Here's an example of handling the onChange event in a functional component:
+List rendering in React allows you to dynamically render lists of data, such as arrays or object properties. You can use the map() method to iterate over the data and generate the list of elements. Here's an example:
 
 ```javascript
-import React, { useState } from "react";
+import React from "react";
 
-function Input() {
-  const [value, setValue] = useState("");
+function TodoList(props) {
+  const todos = props.todos;
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
-  console.log("value", value); // It will log every state change
-
-  return <input type="text" value={value} onChange={handleChange} />;
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+    </ul>
+  );
 }
 ```
 
-In the above example, we have a functional component called Input that renders an input element. We manage the input's value using the `value` state variable and the `setValue` function from the useState Hook. We attach the `handleChange` function to the onChange event of the input. Whenever the input's value changes, the `handleChange` function is called, and it updates the state with the new value.
+`In the above example, the TodoList component renders a list of todos based on the todos prop. The map() method is used to iterate over each todo item in the todos array and generate a <li> element for each item. Each <li> element has a unique key attribute set to the id of the todo item, and the text of the todo is displayed as the content of the element.`
 
-## Commonly Used Events
+## Conditional List Rendering
 
-React supports a wide range of events that you can handle in functional components, including onClick, onChange, onSubmit, onFocus, onBlur, and more. You can attach event handlers to different elements and components based on your application's needs.
+You can combine conditional rendering and list rendering to handle more complex scenarios. For example, you can conditionally render certain list items based on specific conditions. Here's an example:
+
+```javascript
+import React from "react";
+
+function TodoList(props) {
+  const todos = props.todos;
+  const filter = props.filter;
+
+  return (
+    <ul>
+      {todos.map((todo) =>
+        filter === "completed" && !todo.completed ? null : (
+          <li
+            key={todo.id}
+            style={{ textDecoration: todo.completed ? "line-through" : "none" }}
+          >
+            {todo.text}
+          </li>
+        )
+      )}
+    </ul>
+  );
+}
+```
+
+In the above example, the `TodoList` component conditionally renders each todo item based on the value of the `filter` prop. If the `filter` prop is set to 'completed' and the `todo` is not completed, the list item is not rendered. Otherwise, the list item is rendered with the appropriate styling based on the `completed` property of the todo.
