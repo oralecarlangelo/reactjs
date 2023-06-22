@@ -1,59 +1,97 @@
-# Understanding the Context API and useContext Hook
+# React Router
 
-The Context API is a built-in feature in React that allows you to share state and provide it to multiple components without having to pass props manually at each level of the component tree. It provides a way to pass data through the component tree without explicitly passing props down the hierarchy.
+React Router is a popular library for handling routing in React applications. It allows you to create client-side routing and manage different pages or views in your application without a full page reload.
 
-# Example
+## Installation
+
+To install React Router, you can use npm or yarn:
+
+```shell
+npm install react-router-dom
+```
+
+or
+
+```shell
+yarn add react-router-dom
+```
+
+## Example
+
+Here's an example of implementing routing in a React application using React Router:
 
 ```javascript
-import React, { createContext, useContext, useState } from "react";
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+  useParams,
+} from "react-router-dom";
 
-// Create a context object
-const ThemeContext = createContext();
-
-function App() {
-  const [theme, setTheme] = useState("light");
-
-  // Define a provider component to wrap the components that need access to the context
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      <div>
-        <h1>App</h1>
-        <Toolbar />
-      </div>
-    </ThemeContext.Provider>
-  );
+function Home() {
+  return <h1>Welcome to the Home page!</h1>;
 }
 
-function Toolbar() {
-  // Use the useContext hook to access the theme value from the context
-  const { theme, setTheme } = useContext(ThemeContext);
+function About() {
+  return <h1>About Us</h1>;
+}
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-  };
+function UserProfile() {
+  const { username } = useParams();
+  return <h1>User Profile: {username}</h1>;
+}
 
+function NotFound() {
+  return <h1>404 Not Found</h1>;
+}
+
+function App() {
   return (
-    <div>
-      <h2>Toolbar - {theme}</h2>
-      <button onClick={toggleTheme}>Toggle Theme</button>
-    </div>
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/user/johndoe">User Profile</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route path="/about">
+            <About />
+          </Route>
+          <Route path="/user/:username">
+            <UserProfile />
+          </Route>
+          <Route path="*">
+            <NotFound />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
 export default App;
 ```
 
-## Usage
+In this example, we use the `BrowserRouter` component from React Router to set up client-side routing. The `<Router>` component wraps the entire application, providing the routing functionality.
 
-1. Create a context object using the createContext function.
-2. Wrap the components that need access to the context with a Provider component, passing the desired value as the value prop.
-3. Use the useContext hook to access the context value within a functional component.
+Inside the `<Switch>` component, we define different `<Route>` components that correspond to different routes in our application. The exact prop is used to match the exact `path`. The path prop specifies the route path, and the component inside the `<Route>` component is rendered when the path matches the current URL.
 
-## Explanation
+We also use the `<Link>` component to create links for navigation. By clicking on a link, the application will render the corresponding component for that route.
 
-1. In the example above, we create a context object named `ThemeContext` using the `createContext` function. This context will be used to share the `theme` value and `setTheme` function.
-2. In the App component, we wrap the components that need access to the `theme` and `setTheme` values with the `ThemeContext.Provider` component. The value prop of the provider specifies the context value to be shared with its descendants.
-3. Inside the `Toolbar` component, we use the `useContext` hook to access the theme and setTheme values from the `ThemeContext`. This allows us to toggle the theme by updating the `theme` state using the `setTheme` function.
-
-By using the Context API and the useContext hook, we can efficiently manage global state in React applications without passing props through multiple layers of components.
+Additionally, the `<useParams>` hook is used in the `UserProfile` component to retrieve the username parameter from the URL.
