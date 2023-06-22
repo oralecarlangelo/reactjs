@@ -1,61 +1,77 @@
-# Creating and Using Custom Hooks
+# Error Boundary in ReactJS
 
-Custom hooks in React allow you to extract reusable logic from components and share it across multiple components. They enable you to create your own custom abstractions and encapsulate complex functionality into reusable hooks. Here's an example of creating and using a custom hook:
+Error boundaries are a way to gracefully handle and catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI.
 
-## Example: UseWindowWidth Hook
+## Example
 
-The following example demonstrates a custom hook called useWindowWidth. It returns the current width of the window and updates it whenever the window is resized.
+Here's a basic example of an Error Boundary component:
 
 ```javascript
-import { useState, useEffect } from "react";
+import React from "react";
 
-function useWindowWidth() {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true };
+  }
 
-    window.addEventListener("resize", handleResize);
+  componentDidCatch(error, errorInfo) {
+    // You can also log the error to an error reporting service
+    console.error("Caught error: ", error, "Info: ", errorInfo);
+  }
 
-    // Clean up the event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return <h1>Something went wrong.</h1>;
+    }
 
-  return windowWidth;
+    return this.props.children;
+  }
 }
 
-function App() {
-  const windowWidth = useWindowWidth();
+export default ErrorBoundary;
+```
 
+You can use it as a regular component to wrap potentially problematic components:
+
+```javascript
+import ErrorBoundary from "./ErrorBoundary";
+import MyComponent from "./MyComponent";
+
+function App() {
   return (
-    <div>
-      <p>Window Width: {windowWidth}px</p>
-    </div>
+    <ErrorBoundary>
+      <MyComponent />
+    </ErrorBoundary>
   );
 }
 
 export default App;
 ```
 
-In this example, the `useWindowWidth` hook is created. It uses the `useState` and `useEffect` hooks from React. The hook initializes the state with the current window width and updates it whenever the window is resized. The hook also adds an event listener for the resize event and removes it when the component unmounts.
+In the above example, if MyComponent throws an error during rendering, the ErrorBoundary will catch it, display "Something went wrong." and log the error details to the console.
 
-The `App` component uses the `useWindowWidth` hook to retrieve the current window width and renders it in the UI.
+## Methods
 
-## Documentation
+### static getDerivedStateFromError(error)
 
-To create and use custom hooks, follow these steps:
+This lifecycle method is invoked after an error has been thrown by a descendant component. It receives the error that was thrown as a parameter and should return a value to update state.
 
-1. Create a new function starting with the use prefix (e.g., `useCustomHookName`).
-2. Inside the custom hook, use other built-in hooks or custom hooks to implement the desired functionality.
-3. Return any values or functions that you want to expose to the components using the custom hook.
-4. Import and use the custom hook in any component that needs the shared functionality.
-Custom hooks can be powerful tools for reusing logic and abstracting complex functionality into reusable units. They enhance code organization and maintainability by separating concerns and promoting code reuse.
+### componentDidCatch(error, errorInfo)
 
-When creating custom hooks, remember to follow the rules of hooks:
+This method works like a JavaScript catch {} block, but for components. The method is called when an error is thrown in a component during rendering, in a lifecycle method, or in the constructor of any child component.
 
-Only call hooks at the top level of a function component or other custom hooks.
-Don't call hooks inside loops, conditions, or nested functions.
+## Note
+
+Error boundaries do not catch errors for:
+
+- Event handlers (learn more)
+- Asynchronous code (e.g. setTimeout or requestAnimationFrame callbacks)
+- Server side rendering
+- Errors thrown in the error boundary itself (rather than its children)
